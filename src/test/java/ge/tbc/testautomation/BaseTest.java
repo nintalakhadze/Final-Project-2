@@ -15,8 +15,9 @@ public class BaseTest {
     protected BrowserContext browserContext;
     protected Page page;
 
-    @BeforeClass
-    public void setup() {
+    @BeforeClass(alwaysRun = true)
+    public void setupBrowser() {
+
         playwright = Playwright.create();
 
         browser = playwright.chromium().launch(
@@ -31,13 +32,23 @@ public class BaseTest {
         );
 
         page = browserContext.newPage();
+
         page.navigate(BASE_URL);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public void tearDown() {
-        browserContext.close();
-        browser.close();
-        playwright.close();
+
+        if (browserContext != null) {
+            browserContext.close();
+        }
+
+        if (browser != null) {
+            browser.close();
+        }
+
+        if (playwright != null) {
+            playwright.close();
+        }
     }
 }
