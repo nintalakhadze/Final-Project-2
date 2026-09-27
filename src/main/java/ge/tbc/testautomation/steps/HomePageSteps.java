@@ -2,6 +2,7 @@ package ge.tbc.testautomation.steps;
 
 import com.microsoft.playwright.Page;
 import ge.tbc.testautomation.components.CookieComponent;
+import ge.tbc.testautomation.components.HeaderComponent;
 import ge.tbc.testautomation.components.SideMenuComponent;
 import java.util.regex.Pattern;
 
@@ -11,11 +12,13 @@ public class HomePageSteps {
     Page page;
     SideMenuComponent sideMenuComponent;
     CookieComponent cookieComponent;
+    HeaderComponent headerComponent;
 
     public HomePageSteps(Page page) {
         this.page = page;
         sideMenuComponent = new SideMenuComponent(page);
         cookieComponent = new CookieComponent(page);
+        headerComponent = new HeaderComponent(page);
     }
 
     public HomePageSteps acceptCookies() {
@@ -43,6 +46,14 @@ public class HomePageSteps {
 
     public HomePageSteps clickChatBtn(){
         sideMenuComponent.chatButton.click();
+        return this;
+    }
+    public HomePageSteps clickMainMenuBtn() {
+        headerComponent.personalMenuButton.click();
+        return this;
+    }
+    public HomePageSteps clickAddressBtn(){
+        headerComponent.addressesButton.click();
         return this;
     }
 

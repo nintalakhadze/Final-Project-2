@@ -6,41 +6,53 @@ import org.testng.annotations.BeforeClass;
 
 import java.util.List;
 
-import static ge.tbc.testautomation.utils.Constants.BASE_URL;
-
 public class BaseTest {
 
     protected Playwright playwright;
     protected Browser browser;
-    protected BrowserContext browserContext;
+    protected BrowserContext context;
     protected Page page;
 
+    protected static final String BASE_URL =
+            "https://www.tbcbank.ge";
+
     @BeforeClass(alwaysRun = true)
-    public void setupBrowser() {
+    public void setUpBrowser() {
 
         playwright = Playwright.create();
 
         browser = playwright.chromium().launch(
                 new BrowserType.LaunchOptions()
                         .setHeadless(false)
-                        .setArgs(List.of("--start-maximized"))
+                        .setArgs(
+                                List.of(
+                                        "--start-maximized"
+                                )
+                        )
         );
 
-        browserContext = browser.newContext(
+        context = browser.newContext(
                 new Browser.NewContextOptions()
                         .setViewportSize(null)
+                        .setPermissions(
+                                List.of("geolocation")
+                        )
+                        .setGeolocation(
+                                41.7151,
+                                44.8271
+                        )
         );
 
-        page = browserContext.newPage();
+        page = context.newPage();
 
         page.navigate(BASE_URL);
     }
 
     @AfterClass(alwaysRun = true)
-    public void tearDown() {
+    public void tearDownBrowser() {
 
-        if (browserContext != null) {
-            browserContext.close();
+        if (context != null) {
+            context.close();
         }
 
         if (browser != null) {
