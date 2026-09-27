@@ -4,8 +4,10 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 
+import java.util.regex.Pattern;
+
 public class HeaderComponent {
-    public final Locator personalMenuButton,loansButton,languageSwitcher,addressesButton;
+    public final Locator personalMenuButton,loansButton,languageSwitcher,addressesButton,offersButton;
 
     public HeaderComponent(Page page){
         personalMenuButton = page.locator(
@@ -27,5 +29,8 @@ public class HeaderComponent {
                         .setName("მისამართები")
                         .setExact(true)
         );
+        offersButton = page.locator(
+                "tbcx-pw-mega-menu-quick-actions a[href$='/offers']"
+        ).first();
     }
 }

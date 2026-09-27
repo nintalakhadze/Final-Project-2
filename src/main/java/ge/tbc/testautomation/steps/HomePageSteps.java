@@ -4,11 +4,13 @@ import com.microsoft.playwright.Page;
 import ge.tbc.testautomation.components.CookieComponent;
 import ge.tbc.testautomation.components.HeaderComponent;
 import ge.tbc.testautomation.components.SideMenuComponent;
+
 import java.util.regex.Pattern;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 
 public class HomePageSteps {
+
     Page page;
     SideMenuComponent sideMenuComponent;
     CookieComponent cookieComponent;
@@ -33,8 +35,8 @@ public class HomePageSteps {
         assertThat(sideMenuComponent.quickActions)
                 .hasClass(Pattern.compile(".*tbcx-pw-sticky-actions--open.*"));
 
-        assertThat(sideMenuComponent.currencyButton)
-                .isVisible();
+        assertThat(sideMenuComponent.currencyButton).isVisible();
+
         return this;
     }
 
@@ -44,17 +46,23 @@ public class HomePageSteps {
         return this;
     }
 
-    public HomePageSteps clickChatBtn(){
+    public HomePageSteps clickChatBtn() {
         sideMenuComponent.chatButton.click();
         return this;
     }
-    public HomePageSteps clickMainMenuBtn() {
-        headerComponent.personalMenuButton.click();
+
+    public HomePageSteps hoverMainMenu() {
+        headerComponent.personalMenuButton.hover();
         return this;
     }
-    public HomePageSteps clickAddressBtn(){
+
+    public HomePageSteps clickAddressBtn() {
         headerComponent.addressesButton.click();
         return this;
     }
 
+    public HomePageSteps clickOffersBtn() {
+        headerComponent.offersButton.click();
+        return this;
+    }
 }

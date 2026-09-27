@@ -77,20 +77,15 @@ public class LoanCalculatorTest extends BaseTest {
         loanCalculatorSteps.selectLanguage(locale);
     }
 
-    @Test(
-            priority = 3,
-            dependsOnMethods = "selectLanguage"
-    )
-    @Description("Open Personal menu")
-    public void openPersonalMenu() {
-        loanCalculatorSteps.clickMenuBtn(
-                expectedPersonalText
-        );
+    @Test(priority = 3, dependsOnMethods = "selectLanguage")
+    @Description("Open personal menu")
+    public void openMenu() {
+        homePageSteps.hoverMainMenu();
     }
 
     @Test(
             priority = 4,
-            dependsOnMethods = "openPersonalMenu"
+            dependsOnMethods = "openMenu"
     )
     @Description("Open Loans page")
     public void openLoansPage() {

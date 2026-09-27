@@ -23,17 +23,12 @@ public class BaseTest {
 
         browser = playwright.chromium().launch(
                 new BrowserType.LaunchOptions()
-                        .setHeadless(false)
-                        .setArgs(
-                                List.of(
-                                        "--start-maximized"
-                                )
-                        )
+                        .setHeadless(true)
         );
 
         context = browser.newContext(
                 new Browser.NewContextOptions()
-                        .setViewportSize(null)
+                        .setViewportSize(1920, 1080)
                         .setPermissions(
                                 List.of("geolocation")
                         )

@@ -7,28 +7,40 @@ import ge.tbc.testautomation.pages.AddressesPage;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
 import static ge.tbc.testautomation.utils.Constants.ADDRESS_URL;
-import static ge.tbc.testautomation.utils.Constants.CURRENCY_PAGE_URL;
 
 public class AddressesSteps {
-    Page page;
-    AddressesPage addressesPage;
-    public AddressesSteps(Page page) {
 
+    private final Page page;
+    private final AddressesPage addressesPage;
+
+    public AddressesSteps(Page page) {
         this.page = page;
-        addressesPage = new AddressesPage(page);
+        this.addressesPage = new AddressesPage(page);
     }
 
-    public AddressesSteps validateAddressPageUrl(){
+    public AddressesSteps validateAddressPageUrl() {
         assertThat(page).hasURL(ADDRESS_URL);
         return this;
     }
 
-    public AddressesSteps clickCDMs(){
+    public AddressesSteps clickCDMs() {
+
+        assertThat(addressesPage.cdmTab).isVisible();
+
         addressesPage.cdmTab.click();
+
+        assertThat(addressesPage.cdmTab)
+                .hasClass(
+                        java.util.regex.Pattern.compile(".*active.*")
+                );
+
         return this;
     }
+
     public AddressesSteps validateCdmData(CdmData cdmData) {
+
         scrollUntilCdmIsLoaded(cdmData.getAddress());
+
         Locator cdmItem =
                 addressesPage.cdmByAddress(cdmData.getAddress());
 
@@ -65,17 +77,36 @@ public class AddressesSteps {
 
         return this;
     }
+
     public AddressesSteps scrollUntilCdmIsLoaded(String address) {
+
+        assertThat(addressesPage.cdmItems.first())
+                .isVisible(
+                        new com.microsoft.playwright.assertions
+                                .LocatorAssertions.IsVisibleOptions()
+                                .setTimeout(15_000)
+                );
 
         for (int i = 0; i < 10; i++) {
 
-            Locator cdmItem = addressesPage.cdmByAddress(address);
+            Locator cdmItem =
+                    addressesPage.cdmByAddress(address);
 
             if (cdmItem.count() > 0) {
                 return this;
             }
 
-            addressesPage.cdmItems.last()
+            int itemCount =
+                    addressesPage.cdmItems.count();
+
+            if (itemCount == 0) {
+                throw new AssertionError(
+                        "CDM list is not loaded"
+                );
+            }
+
+            addressesPage.cdmItems
+                    .nth(itemCount - 1)
                     .scrollIntoViewIfNeeded();
         }
 
@@ -83,5 +114,4 @@ public class AddressesSteps {
                 "CDM was not found after scrolling: " + address
         );
     }
-
 }

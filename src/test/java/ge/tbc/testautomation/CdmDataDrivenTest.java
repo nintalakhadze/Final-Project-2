@@ -45,7 +45,7 @@ public class CdmDataDrivenTest extends BaseTest {
     @Test(priority = 2, dependsOnMethods = "closeCookie")
     @Description("Open personal menu")
     public void openMenu() {
-        homePageSteps.clickMainMenuBtn();
+        homePageSteps.hoverMainMenu();
     }
 
     @Test(priority = 3, dependsOnMethods = "openMenu")
