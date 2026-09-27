@@ -28,7 +28,6 @@ public class LoanCalculatorTest extends BaseTest {
 
     private HomePageSteps homePageSteps;
     private LoanCalculatorSteps loanCalculatorSteps;
-
     @Factory(
             dataProvider = "localizationData",
             dataProviderClass = DataProviders.class
@@ -89,9 +88,7 @@ public class LoanCalculatorTest extends BaseTest {
     )
     @Description("Open Loans page")
     public void openLoansPage() {
-        loanCalculatorSteps.clickLoan(
-                expectedLoansText
-        );
+        loanCalculatorSteps.clickLoan(expectedLoansText);
     }
 
     @Test(

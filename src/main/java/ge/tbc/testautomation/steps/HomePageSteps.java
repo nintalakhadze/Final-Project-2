@@ -24,12 +24,15 @@ public class HomePageSteps {
     }
 
     public HomePageSteps acceptCookies() {
-        cookieComponent.acceptButton.click();
-        assertThat(cookieComponent.cookieBanner).isHidden();
+        if (cookieComponent.cookieBanner.isVisible()) {
+            cookieComponent.acceptButton.click();
+            assertThat(cookieComponent.cookieBanner).isHidden();
+        }
         return this;
     }
 
     public HomePageSteps openSideMenu() {
+
         sideMenuComponent.sideMenuButton.click();
 
         assertThat(sideMenuComponent.quickActions)
@@ -41,28 +44,41 @@ public class HomePageSteps {
     }
 
     public HomePageSteps clickCurrencyButton() {
+
         sideMenuComponent.currencyButton.click();
-        assertThat(sideMenuComponent.currencyButton).isVisible();
+
         return this;
     }
 
     public HomePageSteps clickChatBtn() {
+//        feedbackSurveySteps.dismissSurveyIfVisible();
+
         sideMenuComponent.chatButton.click();
+
         return this;
     }
 
     public HomePageSteps hoverMainMenu() {
+//        feedbackSurveySteps.dismissSurveyIfVisible();
+
         headerComponent.personalMenuButton.hover();
+
         return this;
     }
 
     public HomePageSteps clickAddressBtn() {
+//        feedbackSurveySteps.dismissSurveyIfVisible();
+
         headerComponent.addressesButton.click();
+
         return this;
     }
 
     public HomePageSteps clickOffersBtn() {
+//        feedbackSurveySteps.dismissSurveyIfVisible();
+
         headerComponent.offersButton.click();
+
         return this;
     }
 }

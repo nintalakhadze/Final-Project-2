@@ -1,5 +1,6 @@
 package ge.tbc.testautomation;
 
+
 import ge.tbc.testautomation.steps.HomePageSteps;
 import ge.tbc.testautomation.steps.OffersPageSteps;
 import io.qameta.allure.Description;
@@ -8,6 +9,7 @@ import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
 
 @Epic("TBC Digital")
 @Feature("Offers")

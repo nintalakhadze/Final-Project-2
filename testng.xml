@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 
 <suite name="TBC Digital Test Suite"
-       parallel="instances"
-       thread-count="2">
+       parallel="classes"
+       thread-count="1">
 
-    <test name="Loan Calculator Localization">
+    <test name="TBC Digital Automation Tests">
         <classes>
+            <class name="ge.tbc.testautomation.CdmDataDrivenTest"/>
+            <class name="ge.tbc.testautomation.ChatTest"/>
+            <class name="ge.tbc.testautomation.CurrencyExchangeTest"/>
             <class name="ge.tbc.testautomation.LoanCalculatorTest"/>
+            <class name="ge.tbc.testautomation.OffersApiHappyPathTest"/>
+            <class name="ge.tbc.testautomation.OffersApiNegativeTest"/>
+            <class name="ge.tbc.testautomation.OffersTest"/>
         </classes>
     </test>
 

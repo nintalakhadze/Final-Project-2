@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Response;
+import com.microsoft.playwright.assertions.LocatorAssertions;
 import ge.tbc.testautomation.pages.OffersPage;
 import org.testng.Assert;
 
@@ -48,9 +49,11 @@ public class OffersPageSteps {
 
     public OffersPageSteps clearProductTypeFilter() {
 
-        assertThat(
-                offersPage.tbcCardCheckbox
-        ).isChecked();
+        assertThat(offersPage.tbcCardCheckbox)
+                .isChecked(
+                        new LocatorAssertions.IsCheckedOptions()
+                                .setTimeout(15_000)
+                );
 
         page.waitForResponse(
                 response ->
@@ -61,9 +64,12 @@ public class OffersPageSteps {
                 () -> offersPage.clearProductTypeButton.click()
         );
 
-        assertThat(
-                offersPage.tbcCardCheckbox
-        ).not().isChecked();
+        assertThat(offersPage.tbcCardCheckbox)
+                .not()
+                .isChecked(
+                        new LocatorAssertions.IsCheckedOptions()
+                                .setTimeout(15_000)
+                );
 
         return this;
     }

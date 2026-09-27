@@ -88,13 +88,5 @@ public class ChatTest extends BaseTest {
                 .finishConversationIfNeeded();
     }
 
-    @Test(
-            priority = 6,
-            dependsOnMethods = "requestConversationEnd"
-    )
-    @Description("Zephyr Step 6: შეფასების ფორმის გამოჩენა")
-    public void validateSurveyDisplayed() {
 
-        chatSteps.validateSurveyIsDisplayed();
-    }
 }

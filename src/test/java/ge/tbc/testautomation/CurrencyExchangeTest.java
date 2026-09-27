@@ -83,7 +83,7 @@ public class CurrencyExchangeTest extends BaseTest {
 
     @Test(
             priority = 6,
-            dependsOnMethods = "selectSellCurrencyEUR"
+            dependsOnMethods = "selectBuyCurrencyUSD"
     )
     @Description("Zephyr Step 6: თანხის შეყვანა")
     public void enterSellAmount() {

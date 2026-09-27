@@ -27,6 +27,7 @@ public class AddressesSteps {
 
         assertThat(addressesPage.cdmTab).isVisible();
 
+
         addressesPage.cdmTab.click();
 
         assertThat(addressesPage.cdmTab)

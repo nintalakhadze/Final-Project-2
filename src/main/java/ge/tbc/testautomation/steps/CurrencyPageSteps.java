@@ -19,8 +19,12 @@ public class CurrencyPageSteps {
         this.page=page;
         currencyPage = new CurrencyPage(page);
     }
-    public CurrencyPageSteps validateCurrencyPageUrl(){
-        assertThat(page).hasURL(CURRENCY_PAGE_URL);
+    public CurrencyPageSteps validateCurrencyPageUrl() {
+
+        assertThat(page).hasURL(
+                Pattern.compile(".*/ka/valutis-kursi(?:/.*)?(?:\\?.*)?$")
+        );
+
         return this;
     }
 

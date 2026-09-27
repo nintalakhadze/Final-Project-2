@@ -19,22 +19,14 @@ public class LoanCalculatorSteps {
         this.loanCalculatorPage = new LoanCalculatorPage(page);
     }
 
-    public LoanCalculatorSteps clickMenuBtn(
-            String expectedPersonalText
-    ) {
-        assertThat(headerComponent.personalMenuButton)
-                .hasText(expectedPersonalText);
 
-        headerComponent.personalMenuButton.hover();
-
-        return this;
-    }
 
     public LoanCalculatorSteps clickLoan(
             String expectedLoansText
     ) {
         assertThat(headerComponent.loansButton)
                 .hasText(expectedLoansText);
+
 
         headerComponent.loansButton.click();
 

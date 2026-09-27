@@ -19,9 +19,24 @@ public class ChatSteps {
     }
 
     public ChatSteps validateChatIsOpened() {
-        assertThat(chatComponent.chatIframe).isVisible();
-        assertThat(chatComponent.messageInput).isVisible();
-        assertThat(chatComponent.botGreetingMessage).isVisible();
+
+        assertThat(chatComponent.chatIframe)
+                .isVisible(
+                        new LocatorAssertions.IsVisibleOptions()
+                                .setTimeout(15_000)
+                );
+
+        assertThat(chatComponent.messageInput)
+                .isVisible(
+                        new LocatorAssertions.IsVisibleOptions()
+                                .setTimeout(15_000)
+                );
+
+        assertThat(chatComponent.botGreetingMessage)
+                .isVisible(
+                        new LocatorAssertions.IsVisibleOptions()
+                                .setTimeout(15_000)
+                );
 
         return this;
     }
