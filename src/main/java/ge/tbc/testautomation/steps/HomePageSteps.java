@@ -1,9 +1,7 @@
 package ge.tbc.testautomation.steps;
 
 import com.microsoft.playwright.Page;
-import ge.tbc.testautomation.components.CookieComponent;
-import ge.tbc.testautomation.components.HeaderComponent;
-import ge.tbc.testautomation.components.SideMenuComponent;
+import ge.tbc.testautomation.pages.HomePage;
 
 import java.util.regex.Pattern;
 
@@ -11,74 +9,61 @@ import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertTha
 
 public class HomePageSteps {
 
-    Page page;
-    SideMenuComponent sideMenuComponent;
-    CookieComponent cookieComponent;
-    HeaderComponent headerComponent;
+    private final HomePage homePage;
 
     public HomePageSteps(Page page) {
-        this.page = page;
-        sideMenuComponent = new SideMenuComponent(page);
-        cookieComponent = new CookieComponent(page);
-        headerComponent = new HeaderComponent(page);
+        homePage = new HomePage(page);
     }
 
     public HomePageSteps acceptCookies() {
-        if (cookieComponent.cookieBanner.isVisible()) {
-            cookieComponent.acceptButton.click();
-            assertThat(cookieComponent.cookieBanner).isHidden();
+        if (homePage.cookie.isVisible()) {
+            homePage.cookie.accept();
+
+            assertThat(homePage.cookie.cookieBanner)
+                    .isHidden();
         }
+
         return this;
     }
 
     public HomePageSteps openSideMenu() {
+        homePage.sideMenu.open();
 
-        sideMenuComponent.sideMenuButton.click();
+        assertThat(homePage.sideMenu.quickActions)
+                .hasClass(
+                        Pattern.compile(
+                                ".*tbcx-pw-sticky-actions--open.*"
+                        )
+                );
 
-        assertThat(sideMenuComponent.quickActions)
-                .hasClass(Pattern.compile(".*tbcx-pw-sticky-actions--open.*"));
-
-        assertThat(sideMenuComponent.currencyButton).isVisible();
+        assertThat(homePage.sideMenu.currencyButton)
+                .isVisible();
 
         return this;
     }
 
     public HomePageSteps clickCurrencyButton() {
-
-        sideMenuComponent.currencyButton.click();
-
+        homePage.sideMenu.openCurrencyExchange();
         return this;
     }
 
     public HomePageSteps clickChatBtn() {
-//        feedbackSurveySteps.dismissSurveyIfVisible();
-
-        sideMenuComponent.chatButton.click();
-
+        homePage.sideMenu.openChat();
         return this;
     }
 
     public HomePageSteps hoverMainMenu() {
-//        feedbackSurveySteps.dismissSurveyIfVisible();
-
-        headerComponent.personalMenuButton.hover();
-
+        homePage.header.hoverPersonalMenu();
         return this;
     }
 
     public HomePageSteps clickAddressBtn() {
-//        feedbackSurveySteps.dismissSurveyIfVisible();
-
-        headerComponent.addressesButton.click();
-
+        homePage.header.openAddresses();
         return this;
     }
 
     public HomePageSteps clickOffersBtn() {
-//        feedbackSurveySteps.dismissSurveyIfVisible();
-
-        headerComponent.offersButton.click();
-
+        homePage.header.openOffers();
         return this;
     }
 }

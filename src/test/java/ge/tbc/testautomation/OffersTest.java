@@ -1,7 +1,5 @@
 package ge.tbc.testautomation;
 
-
-import ge.tbc.testautomation.steps.HomePageSteps;
 import ge.tbc.testautomation.steps.OffersPageSteps;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
@@ -10,57 +8,43 @@ import io.qameta.allure.Story;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-
 @Epic("TBC Digital")
 @Feature("Offers")
 @Story("Offers Network Validation")
 public class OffersTest extends BaseTest {
 
-    private HomePageSteps homePageSteps;
     private OffersPageSteps offersPageSteps;
 
     @BeforeClass(alwaysRun = true)
     public void setUpSteps() {
-        homePageSteps =
-                new HomePageSteps(page);
-
-        offersPageSteps =
-                new OffersPageSteps(page);
-    }
-
-    @Test(priority = 1)
-    @Description("Close cookie consent")
-    public void closeCookie() {
-        homePageSteps.acceptCookies();
+        offersPageSteps = new OffersPageSteps(page);
     }
 
     @Test(
-            priority = 2,
-            dependsOnMethods = "closeCookie"
+            priority = 1,
+            description = "KAN-T12 | Open Offers page"
     )
-    @Description("Open main menu")
-    public void openMenu() {
-        homePageSteps.hoverMainMenu();
-    }
-
-    @Test(
-            priority = 3,
-            dependsOnMethods = "openMenu"
+    @Description(
+            "Open the Offers page and validate that the correct page is displayed"
     )
-    @Description("Open Offers page")
     public void openOffersPage() {
 
-        homePageSteps.clickOffersBtn();
+        homePageSteps
+                .hoverMainMenu()
+                .clickOffersBtn();
 
         offersPageSteps
                 .validateOffersPageUrl();
     }
 
     @Test(
-            priority = 4,
-            dependsOnMethods = "openOffersPage"
+            priority = 2,
+            dependsOnMethods = "openOffersPage",
+            description = "KAN-T12 | Open All Offers page"
     )
-    @Description("Open All Offers page")
+    @Description(
+            "Open All Offers and validate that the All Offers page is displayed"
+    )
     public void openAllOffers() {
 
         offersPageSteps
@@ -69,35 +53,27 @@ public class OffersTest extends BaseTest {
     }
 
     @Test(
-            priority = 5,
-            dependsOnMethods = "openAllOffers"
-    )
-    @Description("Clear default TBC Card filter")
-    public void clearProductTypeFilter() {
-
-        offersPageSteps
-                .clearProductTypeFilter();
-    }
-
-    @Test(
-            priority = 6,
-            dependsOnMethods = "clearProductTypeFilter"
+            priority = 3,
+            dependsOnMethods = "openAllOffers",
+            description = "KAN-T12 | Select Discount filter"
     )
     @Description(
-            "Select Discount filter and capture network response"
+            "Select the Discount filter and capture the network response triggered by the filter"
     )
     public void selectDiscountFilter() {
 
         offersPageSteps
+                .clearProductTypeFilter()
                 .selectDiscountFilter();
     }
 
     @Test(
-            priority = 7,
-            dependsOnMethods = "selectDiscountFilter"
+            priority = 4,
+            dependsOnMethods = "selectDiscountFilter",
+            description = "KAN-T12 | Validate Offers network request and response"
     )
     @Description(
-            "Validate Discount offers network request and response"
+            "Validate the Offers network endpoint, HTTP method, status code and request parameters"
     )
     public void validateOfferNetworkResponse() {
 
@@ -106,11 +82,12 @@ public class OffersTest extends BaseTest {
     }
 
     @Test(
-            priority = 8,
-            dependsOnMethods = "validateOfferNetworkResponse"
+            priority = 5,
+            dependsOnMethods = "validateOfferNetworkResponse",
+            description = "KAN-T12 | Validate filtered Discount offers"
     )
     @Description(
-            "Validate Discount filter and resulting offers"
+            "Validate that the Discount filter is selected and filtered offers are displayed"
     )
     public void validateDiscountOffersDisplayed() {
 

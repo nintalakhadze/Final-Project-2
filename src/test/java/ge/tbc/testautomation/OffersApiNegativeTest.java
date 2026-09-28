@@ -20,36 +20,58 @@ public class OffersApiNegativeTest {
         offersApiSteps = new OffersApiSteps();
     }
 
-    @Test(priority = 1)
-    @Description("Request offers with invalid offer type")
+    @Test(
+            priority = 1,
+            description = "KAN-T17 | Request offers with invalid offer type"
+    )
+    @Description(
+            "Send an offers request using an invalid offer type and receive the API response"
+    )
     public void requestInvalidOfferType() {
-        offersApiSteps.requestInvalidOfferType();
+
+        offersApiSteps
+                .requestInvalidOfferType();
     }
 
     @Test(
             priority = 2,
-            dependsOnMethods = "requestInvalidOfferType"
+            dependsOnMethods = "requestInvalidOfferType",
+            description = "KAN-T17 | Validate API response status"
     )
-    @Description("Validate API response status for invalid offer type")
+    @Description(
+            "Validate the API response status for a request with an invalid offer type"
+    )
     public void validateStatusCode() {
-        offersApiSteps.validateStatusCode();
+
+        offersApiSteps
+                .validateStatusCode();
     }
 
     @Test(
             priority = 3,
-            dependsOnMethods = "validateStatusCode"
+            dependsOnMethods = "validateStatusCode",
+            description = "KAN-T17 | Deserialize API response into POJO"
     )
-    @Description("Deserialize invalid offer type response into POJO")
+    @Description(
+            "Deserialize the invalid offer type API response into the corresponding POJO"
+    )
     public void deserializeResponse() {
-        offersApiSteps.deserializeResponse();
+
+        offersApiSteps
+                .deserializeResponse();
     }
 
     @Test(
             priority = 4,
-            dependsOnMethods = "deserializeResponse"
+            dependsOnMethods = "deserializeResponse",
+            description = "KAN-T17 | Validate empty offers response"
     )
-    @Description("Validate empty response for invalid offer type")
+    @Description(
+            "Validate that an invalid offer type returns an empty offers list and the expected paging data"
+    )
     public void validateEmptyOffersResponse() {
-        offersApiSteps.validateEmptyOffersResponse();
+
+        offersApiSteps
+                .validateEmptyOffersResponse();
     }
 }

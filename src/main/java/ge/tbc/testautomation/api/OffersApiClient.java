@@ -6,7 +6,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import static ge.tbc.testautomation.utils.Constants.EXCHANGE_API_BASE_URL;
-import static ge.tbc.testautomation.utils.Constants.OFFERS_API_ENDPOINT;
+import static ge.tbc.testautomation.utils.Constants.OFFERS_ENDPOINT;
 import static io.restassured.RestAssured.given;
 
 public class OffersApiClient {
@@ -20,6 +20,6 @@ public class OffersApiClient {
                 .filter(new AllureRestAssured())
                 .body(request)
                 .when()
-                .post(OFFERS_API_ENDPOINT);
+                .post(OFFERS_ENDPOINT);
     }
 }

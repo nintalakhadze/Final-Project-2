@@ -2,14 +2,12 @@ package ge.tbc.testautomation.steps;
 
 import com.microsoft.playwright.Page;
 import ge.tbc.testautomation.pages.CurrencyPage;
-
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static ge.tbc.testautomation.utils.Constants.CURRENCY_PAGE_URL;
 
 public class CurrencyPageSteps {
 

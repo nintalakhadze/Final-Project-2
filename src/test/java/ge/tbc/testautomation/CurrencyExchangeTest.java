@@ -3,14 +3,13 @@ package ge.tbc.testautomation;
 import ge.tbc.testautomation.apiSteps.ExchangeRateApiSteps;
 import ge.tbc.testautomation.models.ExchangeRateResponse;
 import ge.tbc.testautomation.steps.CurrencyPageSteps;
-import ge.tbc.testautomation.steps.HomePageSteps;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Link;
 import io.qameta.allure.Story;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import static ge.tbc.testautomation.utils.Constants.CURRENCY_ZEPHYR_URL;
 
@@ -23,128 +22,141 @@ import static ge.tbc.testautomation.utils.Constants.CURRENCY_ZEPHYR_URL;
 )
 public class CurrencyExchangeTest extends BaseTest {
 
-    HomePageSteps homePageSteps;
-    CurrencyPageSteps currencyPageSteps;
-    ExchangeRateApiSteps exchangeRateApiSteps;
+    private CurrencyPageSteps currencyPageSteps;
+    private ExchangeRateApiSteps exchangeRateApiSteps;
 
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     public void setUp() {
-        homePageSteps = new HomePageSteps(page);
         currencyPageSteps = new CurrencyPageSteps(page);
         exchangeRateApiSteps = new ExchangeRateApiSteps();
     }
 
-    @Test(priority = 1)
-    @Description("Zephyr Step 1: Cookies-ზე დათანხმება ")
-    public void closeCookie() {
-        homePageSteps.acceptCookies();
-    }
-
     @Test(
-            priority = 2,
-            dependsOnMethods = "closeCookie"
+            priority = 1,
+            description = "KAN-T10 | Open Currency Exchange page"
     )
-    @Description("Zephyr Step 2: მენიუს გახსნა ")
-    public void openMenu() {
-        homePageSteps.openSideMenu();
-    }
-
-    @Test(
-            priority = 3,
-            dependsOnMethods = "openMenu"
+    @Description(
+            "Zephyr Step 1: ვალუტის კურსის გვერდის გახსნა"
     )
-    @Description("Zephyr Step 3: ვალუტის კურსის გვერდის გახსნა")
     public void openCurrencyExchangePageAndValidatePage() {
-        homePageSteps.clickCurrencyButton();
+
+        homePageSteps
+                .openSideMenu()
+                .clickCurrencyButton();
+
         currencyPageSteps
                 .validateCurrencyPageUrl()
                 .validateInputsAreVisible();
     }
 
     @Test(
-            priority = 4,
-            dependsOnMethods = "openCurrencyExchangePageAndValidatePage"
+            priority = 2,
+            dependsOnMethods = "openCurrencyExchangePageAndValidatePage",
+            description = "KAN-T10 | Select EUR and USD currencies"
     )
-    @Description("Zephyr Step 4: კონვერტორის გაყიდვის ველში EUR-ს არჩევა")
-    public void selectSellCurrencyEUR() {
-        currencyPageSteps.selectSellCurrency("EUR");
-    }
+    @Description(
+            "Zephyr Step 2: გასაყიდ ვალუტად EUR-ის და საყიდელ ვალუტად USD-ის არჩევა"
+    )
+    public void selectSellAndBuyCurrencies() {
 
-    @Test(
-            priority = 5,
-            dependsOnMethods = "selectSellCurrencyEUR"
-    )
-    @Description("Zephyr Step 5: კონვერტორის ყიდვის ველში USD-ის არჩევა")
-    public void selectBuyCurrencyUSD() {
         currencyPageSteps
+                .selectSellCurrency("EUR")
                 .selectBuyCurrency("USD")
                 .validateSelectedCurrencies("EUR", "USD");
     }
 
     @Test(
-            priority = 6,
-            dependsOnMethods = "selectBuyCurrencyUSD"
+            priority = 3,
+            dependsOnMethods = "selectSellAndBuyCurrencies",
+            description = "KAN-T10 | Enter EUR sell amount"
     )
-    @Description("Zephyr Step 6: თანხის შეყვანა")
+    @Description(
+            "Zephyr Step 3: გასაყიდი თანხის შეყვანა და კონვერტირებული თანხის ვალიდაცია"
+    )
     public void enterSellAmount() {
+
         currencyPageSteps
                 .enterAmount("150")
                 .validateConvertedAmountIsDisplayed();
     }
 
     @Test(
-            priority = 7,
-            dependsOnMethods = "enterSellAmount"
+            priority = 4,
+            dependsOnMethods = "enterSellAmount",
+            description = "KAN-T10 | Validate EUR/USD API-UI consistency"
     )
-    @Description("Zephyr Step 7: API-დან მიღებული გაცვლითი კურსის შედარება UI-ზე ნაჩვენებ კურსთან")
+    @Description(
+            "Zephyr Step 4: EUR/USD ვალუტებისა და გაცვლითი კურსის API-სთან შედარება"
+    )
     public void validateEurToUsdExchangeRate() {
 
         ExchangeRateResponse exchangeRate =
                 exchangeRateApiSteps.getExchangeRate("EUR", "USD");
 
-        currencyPageSteps.validateConversionRate(
-                "EUR",
-                "USD",
-                exchangeRate.getBuyRate()
-        );
+        currencyPageSteps
+                .validateSelectedCurrencies(
+                        exchangeRate.getIso1(),
+                        exchangeRate.getIso2()
+                )
+                .validateConversionRate(
+                        exchangeRate.getIso1(),
+                        exchangeRate.getIso2(),
+                        exchangeRate.getBuyRate()
+                );
     }
 
     @Test(
-            priority = 8,
-            dependsOnMethods = "validateEurToUsdExchangeRate"
+            priority = 5,
+            dependsOnMethods = "validateEurToUsdExchangeRate",
+            description = "KAN-T10 | Swap currencies"
     )
-    @Description("Zephyr Step 8: ვალუტების ადგილების შეცვლა")
+    @Description(
+            "Zephyr Step 5: ვალუტების ადგილების შეცვლა და ახალი მიმართულების ვალიდაცია"
+    )
     public void swapCurrencies() {
+
         currencyPageSteps
                 .clickSwapCurrencyButton()
                 .validateSelectedCurrencies("USD", "EUR");
     }
 
     @Test(
-            priority = 9,
-            dependsOnMethods = "swapCurrencies"
+            priority = 6,
+            dependsOnMethods = "swapCurrencies",
+            description = "KAN-T10 | Enter new amount after currency swap"
     )
-    @Description("Zephyr Step 9: ახალი თანხის შეყვანა")
+    @Description(
+            "Zephyr Step 6: ვალუტების ადგილების შეცვლის შემდეგ ახალი თანხის შეყვანა"
+    )
     public void enterNewAmountAfterSwap() {
+
         currencyPageSteps
                 .enterAmount("120")
                 .validateConvertedAmountIsDisplayed();
     }
 
     @Test(
-            priority = 10,
-            dependsOnMethods = "enterNewAmountAfterSwap"
+            priority = 7,
+            dependsOnMethods = "enterNewAmountAfterSwap",
+            description = "KAN-T10 | Validate USD/EUR API-UI consistency"
     )
-    @Description("Zephyr Step 10: API-დან მიღებული USD/EUR გაცვლითი კურსის შედარება UI-ზე ნაჩვენებ კურსთან")
+    @Description(
+            "Zephyr Step 7: USD/EUR ვალუტებისა და გაცვლითი კურსის API-სთან შედარება"
+    )
     public void validateUsdToEurExchangeRate() {
 
         ExchangeRateResponse exchangeRate =
                 exchangeRateApiSteps.getExchangeRate("USD", "EUR");
 
-        currencyPageSteps.validateConversionRate(
-                "USD",
-                "EUR",
-                exchangeRate.getBuyRate()
-        );
+        currencyPageSteps
+                .validateSelectedCurrencies(
+                        exchangeRate.getIso1(),
+                        exchangeRate.getIso2()
+                )
+                .validateConversionRate(
+                        exchangeRate.getIso1(),
+                        exchangeRate.getIso2(),
+                        exchangeRate.getBuyRate()
+                );
     }
 }

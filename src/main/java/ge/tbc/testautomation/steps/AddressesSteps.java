@@ -2,11 +2,14 @@ package ge.tbc.testautomation.steps;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.assertions.LocatorAssertions;
 import ge.tbc.testautomation.models.CdmData;
 import ge.tbc.testautomation.pages.AddressesPage;
 
+import java.util.regex.Pattern;
+
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static ge.tbc.testautomation.utils.Constants.ADDRESS_URL;
+import static ge.tbc.testautomation.utils.Constants.*;
 
 public class AddressesSteps {
 
@@ -19,76 +22,88 @@ public class AddressesSteps {
     }
 
     public AddressesSteps validateAddressPageUrl() {
+
         assertThat(page).hasURL(ADDRESS_URL);
+
         return this;
     }
 
     public AddressesSteps clickCDMs() {
 
-        assertThat(addressesPage.cdmTab).isVisible();
-
+        assertThat(addressesPage.cdmTab)
+                .isVisible();
 
         addressesPage.cdmTab.click();
 
         assertThat(addressesPage.cdmTab)
                 .hasClass(
-                        java.util.regex.Pattern.compile(".*active.*")
+                        Pattern.compile(".*active.*")
                 );
 
         return this;
     }
 
-    public AddressesSteps validateCdmData(CdmData cdmData) {
+    public AddressesSteps validateCdmData(
+            CdmData cdmData
+    ) {
 
-        scrollUntilCdmIsLoaded(cdmData.getAddress());
+        scrollUntilCdmIsLoaded(
+                cdmData.getAddress()
+        );
 
         Locator cdmItem =
-                addressesPage.cdmByAddress(cdmData.getAddress());
+                addressesPage.cdmByAddress(
+                        cdmData.getAddress()
+                );
 
         assertThat(cdmItem).isVisible();
 
-        Locator address = cdmItem.locator(
-                ".tbcx-pw-atm-branches-section__list-item-title"
+        assertThat(
+                addressesPage.cdmAddress(cdmItem)
+        ).hasText(
+                cdmData.getAddress()
         );
 
-        assertThat(address)
-                .hasText(cdmData.getAddress());
-
-        Locator description = cdmItem.locator(
-                ".tbcx-pw-atm-branches-section__list-item-description"
-        );
+        Locator description =
+                addressesPage.cdmDescription(cdmItem);
 
         for (String workingHour :
                 cdmData.getWorkingHours().split(";")) {
 
             assertThat(description)
-                    .containsText(workingHour.trim());
+                    .containsText(
+                            workingHour.trim()
+                    );
         }
 
-        Locator currencies = cdmItem.locator(
-                ".tbcx-pw-atm-branches-section__list-item-currencies"
-        );
+        Locator currencies =
+                addressesPage.cdmCurrencies(cdmItem);
 
         for (String currency :
                 cdmData.getCurrencies().split(",")) {
 
             assertThat(currencies)
-                    .containsText(currency.trim());
+                    .containsText(
+                            currency.trim()
+                    );
         }
 
         return this;
     }
 
-    public AddressesSteps scrollUntilCdmIsLoaded(String address) {
+    public AddressesSteps scrollUntilCdmIsLoaded(
+            String address
+    ) {
 
         assertThat(addressesPage.cdmItems.first())
                 .isVisible(
-                        new com.microsoft.playwright.assertions
-                                .LocatorAssertions.IsVisibleOptions()
-                                .setTimeout(15_000)
+                        new LocatorAssertions.IsVisibleOptions()
+                                .setTimeout(DEFAULT_UI_TIMEOUT)
                 );
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0;
+             i < MAX_CDM_SCROLL_ATTEMPTS;
+             i++) {
 
             Locator cdmItem =
                     addressesPage.cdmByAddress(address);
@@ -102,7 +117,7 @@ public class AddressesSteps {
 
             if (itemCount == 0) {
                 throw new AssertionError(
-                        "CDM list is not loaded"
+                        CDM_LIST_NOT_LOADED_MESSAGE
                 );
             }
 
@@ -112,7 +127,7 @@ public class AddressesSteps {
         }
 
         throw new AssertionError(
-                "CDM was not found after scrolling: " + address
+                CDM_NOT_FOUND_MESSAGE + address
         );
     }
 }

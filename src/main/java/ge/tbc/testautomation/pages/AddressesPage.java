@@ -43,5 +43,22 @@ public class AddressesPage {
                         )
         ).first();
     }
+    public Locator cdmAddress(Locator cdmItem) {
+        return cdmItem.locator(
+                ".tbcx-pw-atm-branches-section__list-item-title"
+        );
+    }
+
+    public Locator cdmDescription(Locator cdmItem) {
+        return cdmItem.locator(
+                ".tbcx-pw-atm-branches-section__list-item-description"
+        );
+    }
+
+    public Locator cdmCurrencies(Locator cdmItem) {
+        return cdmItem.locator(
+                ".tbcx-pw-atm-branches-section__list-item-currencies"
+        );
+    }
 
 }

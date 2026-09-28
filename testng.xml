@@ -3,7 +3,7 @@
 
 <suite name="TBC Digital Test Suite"
        parallel="classes"
-       thread-count="1">
+       thread-count="2">
 
     <test name="TBC Digital Automation Tests">
         <classes>

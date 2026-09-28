@@ -9,12 +9,7 @@ import org.testng.Assert;
 
 import java.util.List;
 
-import static ge.tbc.testautomation.utils.Constants.CASHBACK_FILTER;
-import static ge.tbc.testautomation.utils.Constants.INVALID_OFFER_FILTER;
-import static ge.tbc.testautomation.utils.Constants.OFFERS_LOCALE;
-import static ge.tbc.testautomation.utils.Constants.OFFERS_PAGE_INDEX;
-import static ge.tbc.testautomation.utils.Constants.OFFERS_PAGE_SIZE;
-import static ge.tbc.testautomation.utils.Constants.OFFERS_SEGMENT;
+import static ge.tbc.testautomation.utils.Constants.*;
 
 public class OffersApiSteps {
 
@@ -46,13 +41,13 @@ public class OffersApiSteps {
     public OffersApiSteps validateStatusCode() {
         Assert.assertNotNull(
                 response,
-                "API response should not be null"
+                API_RESPONSE_NULL_MESSAGE
         );
 
         Assert.assertEquals(
                 response.statusCode(),
-                200,
-                "Unexpected status code"
+                SUCCESS_STATUS_CODE,
+                UNEXPECTED_RESPONSE_STATUS_MESSAGE
         );
 
         return this;
@@ -61,14 +56,14 @@ public class OffersApiSteps {
     public OffersApiSteps deserializeResponse() {
         Assert.assertNotNull(
                 response,
-                "API response should not be null before deserialization"
+                API_RESPONSE_NULL_BEFORE_DESERIALIZATION_MESSAGE
         );
 
         offerResponse = response.as(OfferResponse.class);
 
         Assert.assertNotNull(
                 offerResponse,
-                "Deserialized response should not be null"
+                DESERIALIZED_RESPONSE_NULL_MESSAGE
         );
 
         return this;
@@ -77,66 +72,66 @@ public class OffersApiSteps {
     public OffersApiSteps validateCashbackOffers() {
         Assert.assertNotNull(
                 offerResponse.getPagingDetails(),
-                "Paging details should not be null"
+                PAGING_DETAILS_NULL_MESSAGE
         );
 
         Assert.assertEquals(
                 offerResponse.getPagingDetails().getPageIndex(),
                 OFFERS_PAGE_INDEX,
-                "Unexpected page index"
+                UNEXPECTED_PAGE_INDEX_MESSAGE
         );
 
         Assert.assertEquals(
                 offerResponse.getPagingDetails().getPageSize(),
                 OFFERS_PAGE_SIZE,
-                "Unexpected page size"
+                UNEXPECTED_PAGE_SIZE_MESSAGE
         );
 
         Assert.assertTrue(
                 offerResponse.getPagingDetails().getTotalCount() > 0,
-                "Total offers count should be greater than zero"
+                TOTAL_OFFERS_COUNT_INVALID_MESSAGE
         );
 
         Assert.assertTrue(
                 offerResponse.getPagingDetails().getTotalPages() > 0,
-                "Total pages should be greater than zero"
+                TOTAL_PAGES_INVALID_MESSAGE
         );
 
         Assert.assertNotNull(
                 offerResponse.getList(),
-                "Offers list should not be null"
+                OFFERS_LIST_NULL_MESSAGE
         );
 
         Assert.assertFalse(
                 offerResponse.getList().isEmpty(),
-                "Offers list should not be empty"
+                OFFERS_LIST_EMPTY_MESSAGE
         );
 
         Assert.assertTrue(
                 offerResponse.getList().size() <= OFFERS_PAGE_SIZE,
-                "Offers count should not exceed requested page size"
+                OFFERS_COUNT_EXCEEDS_PAGE_SIZE_MESSAGE
         );
 
         Offer firstOffer = offerResponse.getList().get(0);
 
         Assert.assertNotNull(
                 firstOffer.getTitle(),
-                "Offer title should not be null"
+                OFFER_TITLE_NULL_MESSAGE
         );
 
         Assert.assertFalse(
                 firstOffer.getTitle().isBlank(),
-                "Offer title should not be empty"
+                OFFER_TITLE_EMPTY_MESSAGE
         );
 
         Assert.assertNotNull(
                 firstOffer.getSlug(),
-                "Offer slug should not be null"
+                OFFER_SLUG_NULL_MESSAGE
         );
 
         Assert.assertFalse(
                 firstOffer.getSlug().isBlank(),
-                "Offer slug should not be empty"
+                OFFER_SLUG_EMPTY_MESSAGE
         );
 
         Offer offerWithPartner = offerResponse.getList()
@@ -145,28 +140,28 @@ public class OffersApiSteps {
                 .findFirst()
                 .orElseThrow(
                         () -> new AssertionError(
-                                "At least one offer should contain partner data"
+                                PARTNER_DATA_MISSING_MESSAGE
                         )
                 );
 
         Assert.assertNotNull(
                 offerWithPartner.getPartner().getTitle(),
-                "Partner title should not be null"
+                PARTNER_TITLE_NULL_MESSAGE
         );
 
         Assert.assertFalse(
                 offerWithPartner.getPartner().getTitle().isBlank(),
-                "Partner title should not be empty"
+                PARTNER_TITLE_EMPTY_MESSAGE
         );
 
         Assert.assertNotNull(
                 offerWithPartner.getPartner().getSlug(),
-                "Partner slug should not be null"
+                PARTNER_SLUG_NULL_MESSAGE
         );
 
         Assert.assertFalse(
                 offerWithPartner.getPartner().getSlug().isBlank(),
-                "Partner slug should not be empty"
+                PARTNER_SLUG_EMPTY_MESSAGE
         );
 
         return this;
@@ -175,46 +170,46 @@ public class OffersApiSteps {
     public OffersApiSteps validateEmptyOffersResponse() {
         Assert.assertNotNull(
                 offerResponse.getPagingDetails(),
-                "Paging details should not be null"
+                PAGING_DETAILS_NULL_MESSAGE
         );
 
         Assert.assertEquals(
                 offerResponse.getPagingDetails().getPageIndex(),
                 OFFERS_PAGE_INDEX,
-                "Unexpected page index"
+                UNEXPECTED_PAGE_INDEX_MESSAGE
         );
 
         Assert.assertEquals(
                 offerResponse.getPagingDetails().getPageSize(),
                 OFFERS_PAGE_SIZE,
-                "Unexpected page size"
+                UNEXPECTED_PAGE_SIZE_MESSAGE
         );
 
         Assert.assertEquals(
                 offerResponse.getPagingDetails().getTotalCount(),
                 0,
-                "Total count should be zero for invalid offer type"
+                INVALID_OFFER_TOTAL_COUNT_MESSAGE
         );
 
         Assert.assertEquals(
                 offerResponse.getPagingDetails().getTotalPages(),
                 0,
-                "Total pages should be zero for invalid offer type"
+                INVALID_OFFER_TOTAL_PAGES_MESSAGE
         );
 
         Assert.assertFalse(
                 offerResponse.getPagingDetails().isHasNextPage(),
-                "Next page should not exist"
+                NEXT_PAGE_SHOULD_NOT_EXIST_MESSAGE
         );
 
         Assert.assertNotNull(
                 offerResponse.getList(),
-                "Offers list should not be null"
+                OFFERS_LIST_NULL_MESSAGE
         );
 
         Assert.assertTrue(
                 offerResponse.getList().isEmpty(),
-                "Offers list should be empty for invalid offer type"
+                INVALID_OFFER_LIST_NOT_EMPTY_MESSAGE
         );
 
         return this;

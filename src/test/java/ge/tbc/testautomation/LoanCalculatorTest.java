@@ -1,6 +1,5 @@
 package ge.tbc.testautomation;
 
-import ge.tbc.testautomation.steps.HomePageSteps;
 import ge.tbc.testautomation.steps.LoanCalculatorSteps;
 import ge.tbc.testautomation.utils.DataProviders;
 import io.qameta.allure.Allure;
@@ -19,15 +18,14 @@ import org.testng.annotations.Test;
 public class LoanCalculatorTest extends BaseTest {
 
     private final String locale;
-    private final String expectedPersonalText;
     private final String expectedLoansText;
     private final String expectedRequestLoanText;
     private final String expectedCalculatorTitle;
     private final String expectedAmountPlaceholder;
     private final String expectedPeriodPlaceholder;
 
-    private HomePageSteps homePageSteps;
     private LoanCalculatorSteps loanCalculatorSteps;
+
     @Factory(
             dataProvider = "localizationData",
             dataProviderClass = DataProviders.class
@@ -42,7 +40,6 @@ public class LoanCalculatorTest extends BaseTest {
             String expectedPeriodPlaceholder
     ) {
         this.locale = locale;
-        this.expectedPersonalText = expectedPersonalText;
         this.expectedLoansText = expectedLoansText;
         this.expectedRequestLoanText = expectedRequestLoanText;
         this.expectedCalculatorTitle = expectedCalculatorTitle;
@@ -52,7 +49,6 @@ public class LoanCalculatorTest extends BaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUpSteps() {
-        homePageSteps = new HomePageSteps(page);
         loanCalculatorSteps = new LoanCalculatorSteps(page);
     }
 
@@ -61,73 +57,75 @@ public class LoanCalculatorTest extends BaseTest {
         Allure.parameter("Locale", locale);
     }
 
-    @Test(priority = 1)
-    @Description("Close cookie consent")
-    public void closeCookie() {
-        homePageSteps.acceptCookies();
-    }
-
     @Test(
-            priority = 2,
-            dependsOnMethods = "closeCookie"
+            priority = 1,
+            description = "KAN-T13 | Select website language"
     )
-    @Description("Select website language")
+    @Description(
+            "Select the website language based on the provided locale"
+    )
     public void selectLanguage() {
         loanCalculatorSteps.selectLanguage(locale);
     }
 
-    @Test(priority = 3, dependsOnMethods = "selectLanguage")
-    @Description("Open personal menu")
-    public void openMenu() {
-        homePageSteps.hoverMainMenu();
-    }
-
     @Test(
-            priority = 4,
-            dependsOnMethods = "openMenu"
+            priority = 2,
+            dependsOnMethods = "selectLanguage",
+            description = "KAN-T13 | Open Loans page"
     )
-    @Description("Open Loans page")
+    @Description(
+            "Open the Loans page and validate the localized navigation"
+    )
     public void openLoansPage() {
-        loanCalculatorSteps.clickLoan(expectedLoansText);
+
+        homePageSteps.hoverMainMenu();
+
+        loanCalculatorSteps
+                .clickLoan(expectedLoansText);
     }
 
     @Test(
-            priority = 5,
-            dependsOnMethods = "openLoansPage"
+            priority = 3,
+            dependsOnMethods = "openLoansPage",
+            description = "KAN-T13 | Open Loan Calculator"
     )
-    @Description("Open Loan Calculator")
+    @Description(
+            "Open the Loan Calculator and accept the calculator cookie consent"
+    )
     public void openLoanCalculator() {
+
         loanCalculatorSteps.openLoanCalculator(
                 expectedRequestLoanText
         );
-    }
 
-    @Test(
-            priority = 6,
-            dependsOnMethods = "openLoanCalculator"
-    )
-    @Description("Close calculator cookie consent")
-    public void closeCalculatorCookie() {
         loanCalculatorSteps.acceptCookies();
     }
 
     @Test(
-            priority = 7,
-            dependsOnMethods = "closeCalculatorCookie"
+            priority = 4,
+            dependsOnMethods = "openLoanCalculator",
+            description = "KAN-T13 | Select calculator language"
     )
-    @Description("Select calculator language")
+    @Description(
+            "Select the Loan Calculator language based on the provided locale"
+    )
     public void selectCalculatorLanguage() {
+
         loanCalculatorSteps.selectCalculatorLanguage(
                 locale
         );
     }
 
     @Test(
-            priority = 8,
-            dependsOnMethods = "selectCalculatorLanguage"
+            priority = 5,
+            dependsOnMethods = "selectCalculatorLanguage",
+            description = "KAN-T13 | Validate calculator localization"
     )
-    @Description("Validate calculator localization")
+    @Description(
+            "Validate the localized calculator title, loan amount and loan period fields"
+    )
     public void validateCalculatorLocalization() {
+
         loanCalculatorSteps.validateLocalization(
                 expectedCalculatorTitle,
                 expectedAmountPlaceholder,
@@ -136,29 +134,41 @@ public class LoanCalculatorTest extends BaseTest {
     }
 
     @Test(
-            priority = 9,
-            dependsOnMethods = "validateCalculatorLocalization"
+            priority = 6,
+            dependsOnMethods = "validateCalculatorLocalization",
+            description = "KAN-T13 | Set loan amount"
     )
-    @Description("Set loan amount")
+    @Description(
+            "Enter 5000 as the loan amount"
+    )
     public void setLoanAmount() {
+
         loanCalculatorSteps.setAmount("5000");
     }
 
     @Test(
-            priority = 10,
-            dependsOnMethods = "setLoanAmount"
+            priority = 7,
+            dependsOnMethods = "setLoanAmount",
+            description = "KAN-T13 | Set loan period"
     )
-    @Description("Set loan period")
+    @Description(
+            "Enter 24 as the loan period"
+    )
     public void setLoanPeriod() {
+
         loanCalculatorSteps.setPeriod("24");
     }
 
     @Test(
-            priority = 11,
-            dependsOnMethods = "setLoanPeriod"
+            priority = 8,
+            dependsOnMethods = "setLoanPeriod",
+            description = "KAN-T13 | Validate monthly payment"
     )
-    @Description("Validate monthly payment")
+    @Description(
+            "Validate that the calculated monthly payment is displayed"
+    )
     public void validateMonthlyPayment() {
+
         loanCalculatorSteps
                 .validateMonthlyPaymentIsVisible();
     }

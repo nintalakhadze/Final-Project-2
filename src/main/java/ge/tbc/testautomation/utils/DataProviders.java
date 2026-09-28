@@ -37,9 +37,6 @@ public class DataProviders {
 
     @DataProvider(name = "cdmData")
     public static Object[][] cdmData() {
-
-        System.out.println("CDM DATA PROVIDER STARTED");
-
         DatabaseInitializer.initializeDatabase();
 
         try (SqlSession session =
@@ -53,9 +50,7 @@ public class DataProviders {
             List<CdmData> cdmList =
                     mapper.getAllCdmData();
 
-            System.out.println(
-                    "CDM RECORDS FROM DB: " + cdmList.size()
-            );
+
 
             return cdmList.stream()
                     .map(cdm -> new Object[]{cdm})

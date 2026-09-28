@@ -1,10 +1,13 @@
 package ge.tbc.testautomation;
 
 import com.microsoft.playwright.*;
+import ge.tbc.testautomation.steps.HomePageSteps;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 import java.util.List;
+
+import static ge.tbc.testautomation.utils.Constants.BASE_URL;
 
 public class BaseTest {
 
@@ -13,20 +16,10 @@ public class BaseTest {
     protected BrowserContext context;
     protected Page page;
 
-    protected static final String BASE_URL =
-            "https://www.tbcbank.ge";
+    protected HomePageSteps homePageSteps;
 
     @BeforeClass(alwaysRun = true)
     public void setUpBrowser() {
-        System.out.println(
-                "START CLASS: " +
-                        getClass().getSimpleName() +
-                        " | INSTANCE: " +
-                        System.identityHashCode(this) +
-                        " | THREAD: " +
-                        Thread.currentThread().getName()
-        );
-
         playwright = Playwright.create();
 
         browser = playwright.chromium().launch(
@@ -41,48 +34,15 @@ public class BaseTest {
                         .setGeolocation(41.7151, 44.8271)
         );
 
-        context.addInitScript("""
-    (() => {
-        const style = document.createElement('style');
-        style.textContent = `
-            #MDigitalLightboxWrapper,
-            #kampyleFormContainer,
-            iframe[title="Feedback Survey"] {
-                display: none !important;
-                pointer-events: none !important;
-            }
-        `;
-
-        const addStyle = () => {
-            if (document.head && !document.getElementById('disable-medallia-survey')) {
-                style.id = 'disable-medallia-survey';
-                document.head.appendChild(style);
-            }
-        };
-
-        if (document.head) {
-            addStyle();
-        } else {
-            document.addEventListener('DOMContentLoaded', addStyle);
-        }
-    })();
-""");
-
         page = context.newPage();
         page.navigate(BASE_URL);
+
+        homePageSteps = new HomePageSteps(page);
+        homePageSteps.acceptCookies();
     }
 
     @AfterClass(alwaysRun = true)
     public void tearDownBrowser() {
-        System.out.println(
-                "END CLASS: " +
-                        getClass().getSimpleName() +
-                        " | INSTANCE: " +
-                        System.identityHashCode(this) +
-                        " | THREAD: " +
-                        Thread.currentThread().getName()
-        );
-
         if (context != null) {
             context.close();
         }

@@ -1,47 +1,42 @@
 package ge.tbc.testautomation;
 
 import ge.tbc.testautomation.steps.ChatSteps;
-import ge.tbc.testautomation.steps.HomePageSteps;
 import io.qameta.allure.Description;
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import static ge.tbc.testautomation.utils.Constants.HELLO_MESSAGE;
+import static ge.tbc.testautomation.utils.Constants.REQUEST_END_CONVERSATION_MESSAGE;
+
+@Epic("TBC Digital")
+@Feature("Chat")
+@Story("Chatbot Conversation")
 public class ChatTest extends BaseTest {
 
-    private HomePageSteps homePageSteps;
     private ChatSteps chatSteps;
 
     private int botMessagesBeforeHello;
     private int botMessagesBeforeEndRequest;
 
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     public void initializeSteps() {
-        homePageSteps = new HomePageSteps(page);
         chatSteps = new ChatSteps(page);
     }
 
-    @Test(priority = 1)
-    @Description("Zephyr Step 1: Cookie შეტყობინების დახურვა")
-    public void closeCookie() {
-        homePageSteps.acceptCookies();
-    }
-
     @Test(
-            priority = 2,
-            dependsOnMethods = "closeCookie"
+            priority = 1,
+            description = "KAN-T14 | Open chat"
     )
-    @Description("Zephyr Step 2: სწრაფი მოქმედებების მენიუს გახსნა")
-    public void openMenu() {
-        homePageSteps.openSideMenu();
-    }
-
-    @Test(
-            priority = 3,
-            dependsOnMethods = "openMenu"
+    @Description(
+            "Open the chat and validate that the chat interface is displayed"
     )
-    @Description("Zephyr Step 3: ჩატის გახსნა")
     public void openChat() {
+
         homePageSteps
+                .openSideMenu()
                 .clickChatBtn();
 
         chatSteps
@@ -49,44 +44,48 @@ public class ChatTest extends BaseTest {
     }
 
     @Test(
-            priority = 4,
-            dependsOnMethods = "openChat"
+            priority = 2,
+            dependsOnMethods = "openChat",
+            description = "KAN-T14 | Send hello message and receive bot response"
     )
-    @Description("Zephyr Step 4: შეტყობინების გაგზავნა და ბოტის პასუხის მიღება")
+    @Description(
+            "Send a hello message and validate that the sent message is displayed and a new bot response is received"
+    )
     public void sendHelloMessage() {
 
         botMessagesBeforeHello =
                 chatSteps.getBotMessagesCount();
 
         chatSteps
-                .sendMessage("გამარჯობა")
-                .validateSentMessage("გამარჯობა")
+                .sendMessage(HELLO_MESSAGE)
+                .validateSentMessage(HELLO_MESSAGE)
                 .validateNewBotMessageReceived(
                         botMessagesBeforeHello
                 )
                 .validateLastBotMessageContains(
-                        "გამარჯობა"
+                        HELLO_MESSAGE
                 );
     }
 
     @Test(
-            priority = 5,
-            dependsOnMethods = "sendHelloMessage"
+            priority = 3,
+            dependsOnMethods = "sendHelloMessage",
+            description = "KAN-T14 | Request conversation end"
     )
-    @Description("Zephyr Step 5: საუბრის დასრულების მოთხოვნა")
+    @Description(
+            "Request to end the conversation and validate that the sent message is displayed and a new bot response is received"
+    )
     public void requestConversationEnd() {
 
         botMessagesBeforeEndRequest =
                 chatSteps.getBotMessagesCount();
 
         chatSteps
-                .sendMessage("საუბრის დასრულება")
-                .validateSentMessage("საუბრის დასრულება")
+                .sendMessage(REQUEST_END_CONVERSATION_MESSAGE)
+                .validateSentMessage(REQUEST_END_CONVERSATION_MESSAGE)
                 .validateNewBotMessageReceived(
                         botMessagesBeforeEndRequest
                 )
                 .finishConversationIfNeeded();
     }
-
-
 }

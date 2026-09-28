@@ -9,16 +9,9 @@ import ge.tbc.testautomation.pages.OffersPage;
 import org.testng.Assert;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
-import static ge.tbc.testautomation.utils.Constants.ALL_OFFERS_URL;
-import static ge.tbc.testautomation.utils.Constants.OFFERS_URL;
+import static ge.tbc.testautomation.utils.Constants.*;
 
 public class OffersPageSteps {
-
-    private static final String OFFERS_ENDPOINT =
-            "/api/v1/marketing/entries/offer";
-
-    private static final String DISCOUNT_FILTER =
-            "OfferType:Discount";
 
     private final Page page;
     private final OffersPage offersPage;
@@ -52,13 +45,13 @@ public class OffersPageSteps {
         assertThat(offersPage.tbcCardCheckbox)
                 .isChecked(
                         new LocatorAssertions.IsCheckedOptions()
-                                .setTimeout(15_000)
+                                .setTimeout(OFFERS_FILTER_TIMEOUT)
                 );
 
         page.waitForResponse(
                 response ->
                         response.url().contains(OFFERS_ENDPOINT)
-                                && "POST".equals(
+                                && POST_METHOD.equals(
                                 response.request().method()
                         ),
                 () -> offersPage.clearProductTypeButton.click()
@@ -68,7 +61,7 @@ public class OffersPageSteps {
                 .not()
                 .isChecked(
                         new LocatorAssertions.IsCheckedOptions()
-                                .setTimeout(15_000)
+                                .setTimeout(OFFERS_FILTER_TIMEOUT)
                 );
 
         return this;
@@ -79,13 +72,12 @@ public class OffersPageSteps {
         offerResponse = page.waitForResponse(
                 response ->
                         response.url().contains(OFFERS_ENDPOINT)
-                                && "POST".equals(
+                                && POST_METHOD.equals(
                                 response.request().method()
                         )
                                 && hasDiscountFilter(
                                 response.request().postData()
                         ),
-
                 () -> offersPage.discountFilter.click()
         );
 
@@ -96,25 +88,25 @@ public class OffersPageSteps {
 
         Assert.assertNotNull(
                 offerResponse,
-                "Offer response was not captured"
+                OFFER_RESPONSE_NOT_CAPTURED_MESSAGE
         );
 
         Assert.assertTrue(
                 offerResponse.url().contains(OFFERS_ENDPOINT),
-                "Unexpected offers endpoint: "
+                UNEXPECTED_OFFERS_ENDPOINT_MESSAGE
                         + offerResponse.url()
         );
 
         Assert.assertEquals(
                 offerResponse.request().method(),
-                "POST",
-                "Unexpected HTTP method"
+                POST_METHOD,
+                UNEXPECTED_HTTP_METHOD_MESSAGE
         );
 
         Assert.assertEquals(
                 offerResponse.status(),
-                200,
-                "Unexpected response status"
+                SUCCESS_STATUS_CODE,
+                UNEXPECTED_RESPONSE_STATUS_MESSAGE
         );
 
         String postData =
@@ -122,7 +114,7 @@ public class OffersPageSteps {
 
         Assert.assertNotNull(
                 postData,
-                "Offers request body is null"
+                OFFERS_REQUEST_BODY_NULL_MESSAGE
         );
 
         try {
@@ -135,12 +127,12 @@ public class OffersPageSteps {
 
             Assert.assertNotNull(
                     filters,
-                    "Filter field is missing from request"
+                    FILTER_FIELD_MISSING_MESSAGE
             );
 
             Assert.assertTrue(
                     filters.isArray(),
-                    "Filter field is not an array"
+                    FILTER_FIELD_NOT_ARRAY_MESSAGE
             );
 
             Assert.assertTrue(
@@ -148,37 +140,37 @@ public class OffersPageSteps {
                             filters,
                             DISCOUNT_FILTER
                     ),
-                    "OfferType:Discount was not sent"
+                    DISCOUNT_FILTER_NOT_SENT_MESSAGE
             );
 
             Assert.assertEquals(
                     requestBody.get("locale").asText(),
-                    "ka-GE",
-                    "Unexpected request locale"
+                    OFFERS_LOCALE,
+                    UNEXPECTED_REQUEST_LOCALE_MESSAGE
             );
 
             Assert.assertEquals(
                     requestBody.get("segment").asText(),
-                    "All",
-                    "Unexpected request segment"
+                    OFFERS_SEGMENT,
+                    UNEXPECTED_REQUEST_SEGMENT_MESSAGE
             );
 
             Assert.assertEquals(
                     requestBody.get("pageIndex").asInt(),
-                    0,
-                    "Unexpected page index"
+                    OFFERS_PAGE_INDEX,
+                    UNEXPECTED_PAGE_INDEX_MESSAGE
             );
 
             Assert.assertEquals(
                     requestBody.get("pageSize").asInt(),
-                    12,
-                    "Unexpected page size"
+                    OFFERS_PAGE_SIZE,
+                    UNEXPECTED_PAGE_SIZE_MESSAGE
             );
 
         } catch (Exception e) {
 
             throw new AssertionError(
-                    "Failed to parse offers request body",
+                    FAILED_TO_PARSE_OFFERS_REQUEST_MESSAGE,
                     e
             );
         }
@@ -201,7 +193,7 @@ public class OffersPageSteps {
 
         Assert.assertTrue(
                 offersCount > 0,
-                "No discount offers were displayed"
+                NO_DISCOUNT_OFFERS_DISPLAYED_MESSAGE
         );
 
         return this;

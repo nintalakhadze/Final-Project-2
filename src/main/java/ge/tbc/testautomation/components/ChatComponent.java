@@ -1,11 +1,12 @@
 package ge.tbc.testautomation.components;
 
+import com.microsoft.playwright.Frame;
 import com.microsoft.playwright.FrameLocator;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 public class ChatComponent {
-
+    private final Page page;
     public final Locator chatIframe,
             messageInput,
             botGreetingMessage,
@@ -14,6 +15,7 @@ public class ChatComponent {
     public final FrameLocator chatFrame;
 
     public ChatComponent(Page page) {
+        this.page = page;
 
         chatIframe = page.locator(
                 "iframe[title='Messaging window']"
@@ -47,4 +49,27 @@ public class ChatComponent {
                                 .setExact(true)
                 );
     }
+    public Frame getMedalliaFrame() {
+        return page.frames().stream()
+                .filter(frame ->
+                        frame.name().equals("web_messenger_ref")
+                )
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Locator surveyContainer(Frame frame) {
+        return frame.locator(
+                "#kampyleFormContainer:visible"
+        );
+    }
+
+    public boolean isSurveyDisplayed() {
+        return page.frames().stream()
+                .anyMatch(frame ->
+                        frame.name().equals("web_messenger_ref")
+                                && surveyContainer(frame).count() > 0
+                );
+    }
+
 }

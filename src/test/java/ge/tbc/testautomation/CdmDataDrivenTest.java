@@ -2,7 +2,6 @@ package ge.tbc.testautomation;
 
 import ge.tbc.testautomation.models.CdmData;
 import ge.tbc.testautomation.steps.AddressesSteps;
-import ge.tbc.testautomation.steps.HomePageSteps;
 import ge.tbc.testautomation.utils.DataProviders;
 import io.qameta.allure.Description;
 import io.qameta.allure.Epic;
@@ -18,8 +17,6 @@ import org.testng.annotations.Test;
 public class CdmDataDrivenTest extends BaseTest {
 
     private final CdmData cdmData;
-
-    private HomePageSteps homePageSteps;
     private AddressesSteps addressesSteps;
 
     @Factory(
@@ -32,38 +29,51 @@ public class CdmDataDrivenTest extends BaseTest {
 
     @BeforeClass(alwaysRun = true)
     public void setUp() {
-        homePageSteps = new HomePageSteps(page);
         addressesSteps = new AddressesSteps(page);
     }
 
-    @Test(priority = 1)
-    @Description("Close cookie consent")
-    public void closeCookie() {
-        homePageSteps.acceptCookies();
-    }
-
-    @Test(priority = 2, dependsOnMethods = "closeCookie")
-    @Description("Open personal menu")
-    public void openMenu() {
-        homePageSteps.hoverMainMenu();
-    }
-
-    @Test(priority = 3, dependsOnMethods = "openMenu")
-    @Description("Open addresses page")
+    @Test(
+            priority = 1,
+            description = "KAN-T15 | Open Addresses page"
+    )
+    @Description(
+            "Open the Addresses page and validate that the correct page is displayed"
+    )
     public void openAddressPage() {
-        homePageSteps.clickAddressBtn();
-        addressesSteps.validateAddressPageUrl();
+
+        homePageSteps
+                .hoverMainMenu()
+                .clickAddressBtn();
+
+        addressesSteps
+                .validateAddressPageUrl();
     }
 
-    @Test(priority = 4, dependsOnMethods = "openAddressPage")
-    @Description("Select CDMs")
+    @Test(
+            priority = 2,
+            dependsOnMethods = "openAddressPage",
+            description = "KAN-T15 | Select CDMs"
+    )
+    @Description(
+            "Select the CDM tab and validate that the CDM list is displayed"
+    )
     public void chooseCDMs() {
-        addressesSteps.clickCDMs();
+
+        addressesSteps
+                .clickCDMs();
     }
 
-    @Test(priority = 5, dependsOnMethods = "chooseCDMs")
-    @Description("Validate CDM data from database")
+    @Test(
+            priority = 3,
+            dependsOnMethods = "chooseCDMs",
+            description = "KAN-T15 | Validate CDM data from database"
+    )
+    @Description(
+            "Validate that the CDM address, working hours and currencies displayed in the UI match the database data"
+    )
     public void validateCdmData() {
-        addressesSteps.validateCdmData(cdmData);
+
+        addressesSteps
+                .validateCdmData(cdmData);
     }
 }

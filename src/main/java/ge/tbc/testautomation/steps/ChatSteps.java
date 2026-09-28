@@ -1,12 +1,12 @@
 package ge.tbc.testautomation.steps;
 
 import com.microsoft.playwright.Frame;
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.assertions.LocatorAssertions;
 import ge.tbc.testautomation.components.ChatComponent;
 
 import static com.microsoft.playwright.assertions.PlaywrightAssertions.assertThat;
+import static ge.tbc.testautomation.utils.Constants.*;
 
 public class ChatSteps {
 
@@ -23,32 +23,34 @@ public class ChatSteps {
         assertThat(chatComponent.chatIframe)
                 .isVisible(
                         new LocatorAssertions.IsVisibleOptions()
-                                .setTimeout(15_000)
+                                .setTimeout(DEFAULT_UI_TIMEOUT)
                 );
 
         assertThat(chatComponent.messageInput)
                 .isVisible(
                         new LocatorAssertions.IsVisibleOptions()
-                                .setTimeout(15_000)
+                                .setTimeout(DEFAULT_UI_TIMEOUT)
                 );
 
         assertThat(chatComponent.botGreetingMessage)
                 .isVisible(
                         new LocatorAssertions.IsVisibleOptions()
-                                .setTimeout(15_000)
+                                .setTimeout(DEFAULT_UI_TIMEOUT)
                 );
 
         return this;
     }
 
     public ChatSteps sendMessage(String message) {
+
         chatComponent.messageInput.fill(message);
-        chatComponent.messageInput.press("Enter");
+        chatComponent.messageInput.press(ENTER_KEY);
 
         return this;
     }
 
     public ChatSteps validateSentMessage(String message) {
+
         assertThat(chatComponent.userMessage(message))
                 .isVisible();
 
@@ -60,17 +62,21 @@ public class ChatSteps {
     }
 
     public ChatSteps validateNewBotMessageReceived(int previousCount) {
+
         assertThat(chatComponent.botMessages)
                 .hasCount(
                         previousCount + 1,
                         new LocatorAssertions.HasCountOptions()
-                                .setTimeout(15_000)
+                                .setTimeout(DEFAULT_UI_TIMEOUT)
                 );
 
         return this;
     }
 
-    public ChatSteps validateLastBotMessageContains(String expectedText) {
+    public ChatSteps validateLastBotMessageContains(
+            String expectedText
+    ) {
+
         assertThat(chatComponent.botMessages.last())
                 .containsText(expectedText);
 
@@ -79,18 +85,18 @@ public class ChatSteps {
 
     public ChatSteps finishConversationIfNeeded() {
 
-        String lastBotMessage = chatComponent.botMessages
-                .last()
-                .innerText();
+        String lastBotMessage =
+                chatComponent.botMessages
+                        .last()
+                        .innerText();
 
-        if (lastBotMessage.contains(
-                "სხვა რამეში ხომ არ შემიძლია დაგეხმარო"
-        )) {
+        if (lastBotMessage.contains(CHAT_HELP_QUESTION)) {
 
-            int botMessagesBeforeNo = getBotMessagesCount();
+            int botMessagesBeforeNo =
+                    getBotMessagesCount();
 
-            sendMessage("არა");
-            validateSentMessage("არა");
+            sendMessage(CHAT_NO_RESPONSE);
+            validateSentMessage(CHAT_NO_RESPONSE);
             validateNewBotMessageReceived(botMessagesBeforeNo);
         }
 
@@ -100,33 +106,23 @@ public class ChatSteps {
     public ChatSteps validateSurveyIsDisplayed() {
 
         page.waitForCondition(
-                () -> page.frames().stream()
-                        .anyMatch(frame ->
-                                frame.name().equals("web_messenger_ref")
-                                        && frame.locator(
-                                        "#kampyleFormContainer:visible"
-                                ).count() > 0
-                        ),
+                chatComponent::isSurveyDisplayed,
                 new Page.WaitForConditionOptions()
-                        .setTimeout(30_000)
+                        .setTimeout(SURVEY_TIMEOUT)
         );
 
-        Frame medalliaFrame = page.frames().stream()
-                .filter(frame ->
-                        frame.name().equals("web_messenger_ref")
-                )
-                .findFirst()
-                .orElseThrow(() ->
-                        new AssertionError(
-                                "Medallia frame not found"
-                        )
-                );
+        Frame medalliaFrame =
+                chatComponent.getMedalliaFrame();
 
-        Locator surveyContainer = medalliaFrame.locator(
-                "#kampyleFormContainer:visible"
-        );
+        if (medalliaFrame == null) {
+            throw new AssertionError(
+                    MEDALLIA_FRAME_NOT_FOUND_MESSAGE
+            );
+        }
 
-        assertThat(surveyContainer).isVisible();
+        assertThat(
+                chatComponent.surveyContainer(medalliaFrame)
+        ).isVisible();
 
         return this;
     }
